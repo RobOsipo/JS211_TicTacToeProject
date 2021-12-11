@@ -1,3 +1,4 @@
+// uses strict mode so strings are not coerced, variables are not hoisted, etc... 
 'use strict';
 
 // brings in the assert module for unit testing
@@ -10,178 +11,77 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-// creates and empty "board" for the user to see where marks can be placed.
-// using let because the variable is expected to change with more 'X's and 'O's to add
-let board = [
-  [' ', ' ', ' '],
-  [' ', ' ', ' '],
-  [' ', ' ', ' ']
-];
+// the function that will be called by the unit test below
+let gameTie = false
+let user1Won = false
+let user2Won = false
+const rock = 'ROCK'
+const scissors = 'SCISSORS'
+const paper = 'PAPER'
 
-// assigns the first mark as 'X'
-// using let because the variable is expected to change from 'X' to 'O' and back
-let playerTurn = 'X';
 
-// is a function that print the current status of the board using the variable - board
-const printBoard = () => {
-  console.log('   0  1  2');
-  console.log('0 ' + board[0].join(' | '));
-  console.log('  ---------');
-  console.log('1 ' + board[1].join(' | '));
-  console.log('  ---------');
-  console.log('2 ' + board[2].join(' | '));
-}
-
-const horizontalWin = () => {
-  // Your code here to check for horizontal wins
-  if (board[0][0] === 'X' && board[0][1] === 'X' && board[0][2] === 'X' ||
-  board[1][0] === 'X' && board[1][1] === 'X' && board[1][2] === 'X' ||
-  board[2][0] === 'X' && board[2][1] === 'X' && board[2][2] === 'X') {
-
-    return 'Player X has won'
-
-  } else if (board[0][0] === 'O' && board[0][1] === 'O' && board[0][2] === 'O' ||
-  board[1][0] === 'O' && board[1][1] === 'O' && board[1][2] === 'O' ||
-  board[2][0] === 'O' && board[2][1] === 'O' && board[2][2] === 'O') {
-
-    return 'Player O has won'
-    
-  } 
+const rockPaperScissors = (hand1, hand2) => {
+if (hand1 === rock && hand2 === scissors || hand1 === paper && hand2 === rock || hand1 === scissors && hand2 === paper) {
  
-}
+  hand1.trim().toLowerCase()
+  user1Won = true;
+  return "Hand one wins!"
 
-const verticalWin = () => {
-  // Your code here to check for vertical wins
-  if (board[0][0] === 'X' && board[1][0] === 'X' && board[2][0] === 'X' ||
-  board[0][1] === 'X' && board[1][1] === 'X' && board[2][1] === 'X' ||
-  board[0][2] === 'X' && board[1][2] === 'X' && board[2][2] === 'X') {
+} else if ( hand2 === rock && hand1 === scissors || hand1 === paper && hand1 === rock || hand2 === scissors && hand2 === paper) {
+  
+  hand2.trim().toLowerCase()
+  user2Won = true;
+  return "Hand two wins!"
 
-    return 'Player X has won'
-
-  } else if (board[0][0] === 'O' && board[1][0] === 'O' && board[2][0] === 'O' ||
-  board[0][1] === 'O' && board[1][1] === 'O' && board[2][1] === 'O' ||
-  board[0][2] === 'O' && board[1][2] === 'O' && board[2][2] === 'O') {
-
-    return 'Player O has won'
-    
-  } 
-
-}
-
-const diagonalWin = () => {
-  // Your code here to check for diagonal wins
-  if (board[0][0] === 'X' && board[1][1] === 'X' && board[2][2] === 'X' ||
-  board[0][2] === 'X' && board[1][1] === 'X' && board[2][0] === 'X') {
-    
-    return 'Player X has won'
-
-  } else if (board[0][0] === 'O' && board[1][1] === 'O' && board[2][2] === 'O' ||
-  board[0][2] === 'O' && board[1][1] === 'O' && board[2][0] === 'O') {
-
-    return 'Player O has won'
-    
-  }
-}
-
-
-const checkForWin = () => {
+} else  ( hand1 === rock && hand2 === rock || hand1 === paper && hand2 === paper || hand1 === scissors && hand2 === scissors) {
  
-  if(horizontalWin() || verticalWin() || diagonalWin()) {
-   window.alert(`Player ${currentMarker} won!`)
-  } else {
-    changeMarker()
-  }
+  hand1.trim().toLowerCase()
+  hand2.trim().toLowerCase()
+  gameTie = true;
+  return "It's a tie!"
+
+
+}
 }
 
-
-const changeMarker = () => {
-  currentMarker = currentMarker === "X" ? "O" : "X"
-}
-
-
-
-const ticTacToe = (row, column) => {
- 
-  if (board[row][column] === currentMarker) {
-    checkForWin()
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const getPrompt = () => {
-  printBoard();
-  console.log("It's Player " + playerTurn + "'s turn.");
-  rl.question('row: ', (row) => {
-    rl.question('column: ', (column) => {
-      ticTacToe(row, column);
+// the first function called in the program to get an input from the user
+// to run the function use the command: node main.js
+// to close it ctrl + C
+function getPrompt() {
+  rl.question('hand1: ', (answer1) => {
+    rl.question('hand2: ', (answer2) => {
+      console.log( rockPaperScissors(answer1, answer2) );
       getPrompt();
     });
   });
 }
 
-
 // Unit Tests
-// You use them run the command: npm test main.js
+// to use them run the command: npm test main.js
 // to close them ctrl + C
 if (typeof describe === 'function') {
 
-  describe('#ticTacToe()', () => {
-    it('should place mark on the board', () => {
-      ticTacToe(1, 1);
-      assert.deepEqual(board, [ [' ', ' ', ' '], [' ', 'X', ' '], [' ', ' ', ' '] ]);
+  // most are notes for human eyes to read, but essentially passes in inputs then compares if the function you built returns the expected output.
+  describe('#rockPaperScissors()', () => {
+    it('should detect a tie', () => {
+      assert.equal(rockPaperScissors('rock', 'rock'), "It's a tie!");
+      assert.equal(rockPaperScissors('paper', 'paper'), "It's a tie!");
+      assert.equal(rockPaperScissors('scissors', 'scissors'), "It's a tie!");
     });
-    it('should alternate between players', () => {
-      ticTacToe(0, 0);
-      assert.deepEqual(board, [ ['O', ' ', ' '], [' ', 'X', ' '], [' ', ' ', ' '] ]);
+    it('should detect which hand won', () => {
+      assert.equal(rockPaperScissors('rock', 'paper'), "Hand two wins!");
+      assert.equal(rockPaperScissors('paper', 'scissors'), "Hand two wins!");
+      assert.equal(rockPaperScissors('rock', 'scissors'), "Hand one wins!");
     });
-    it('should check for vertical wins', () => {
-      board = [ [' ', 'X', ' '], [' ', 'X', ' '], [' ', 'X', ' '] ];
-      assert.equal(verticalWin(), true);
-    });
-    it('should check for horizontal wins', () => {
-      board = [ ['X', 'X', 'X'], [' ', ' ', ' '], [' ', ' ', ' '] ];
-      assert.equal(horizontalWin(), true);
-    });
-    it('should check for diagonal wins', () => {
-      board = [ ['X', ' ', ' '], [' ', 'X', ' '], [' ', ' ', 'X'] ];
-      assert.equal(diagonalWin(), true);
-    });
-    it('should detect a win', () => {
-      ticTacToe(0, 0)
-      ticTacToe(0, 1)
-      ticTacToe(1, 1)
-      ticTacToe(0, 2)
-      ticTacToe(2, 2)
-      assert.equal(checkForWin(), true);
+    it('should scrub input to ensure lowercase with "trim"ed whitepace', () => {
+      assert.equal(rockPaperScissors('rOcK', ' paper '), "Hand two wins!");
+      assert.equal(rockPaperScissors('Paper', 'SCISSORS'), "Hand two wins!");
+      assert.equal(rockPaperScissors('rock ', 'sCiSsOrs'), "Hand one wins!");
     });
   });
 } else {
 
+  // always returns ask the user for another input
   getPrompt();
 
 }
